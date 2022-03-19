@@ -4,25 +4,23 @@ import os
 import hashlib
 import time
 from datetime import datetime
+
 # Crear socket tcp/ip
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-num_conexiones = int(input('Ingrese la cantidad de conexiones que quiere atender'))
+num_conexiones = int(input('Ingrese la cantidad de conexiones que desea atender'))
 
 while (num_conexiones>25 and num_conexiones <= 0):
-    num_conexiones = int(input('Ingrese un número válido de conexiones'))
+    num_conexiones = int(input('Ingrese un número válido de conexiones (Entre 0 y 25)'))
 
-
-#Creación del Log
-#log = open('./'+datetime.today().strftime('%Y-%m-%d-%H:%M:%S')+".txt", "w")
 
 # conectar socket al puerto
 server_address = ('localhost', 8888)
-print(sys.stderr, 'starting up on %s port %s' % server_address)
+print('El %s esta esparando en el puerto %s' % server_address)
 sock.bind(server_address)
 
 #archivo a transmitir
-filename = input('Ingrese el nombre del archivo a enviar')
+filename = input('Ingrese el nombre del archivo a enviar (100mb.txt o 250mb.txt)')
 while filename not in ['100mb.txt','250mb.txt']:
     filename = input('Ingrese un nombre correcto del archivo a enviar')
 
@@ -52,12 +50,12 @@ for i in range(num_conexiones):
     l = f.read(1024)
     
     # Espera por una conexion
-    print (sys.stderr, 'waiting for a connection')
+    print ( 'El servidor esta esparando una conexión')
     connection, client_address = sock.accept()
     start = time.time()
     log.write('Direccion del cliente: '+str(client_address)+'\n')  
     try:
-        print (sys.stderr, 'connection from', client_address)
+        print ( 'Conectado desde', client_address)
         
         data = connection.recv(32) 
             
@@ -82,16 +80,11 @@ for i in range(num_conexiones):
                     l= f.read(1024)
             
                 connection.send(l)
-            #Enviamos el hashÑ
-                #confirmacionArchivo = connection.recv(32)
-                #print(confirmacionArchivo.decode('utf-8'))
-                #if(confirmacionArchivo.decode('utf-8')== "Entrega del archivo exitosa"):
+                #Enviamos el hash
                 print('Conexión terminada exitosamente')
                 log.write('Entrega del archivo: se envio el archivo '+'\n')  
                 end = time.time()
-                #else:
-                 #   print('Conexión terminada con error')
-            
+
         log.write('Tiempo transferencia con cliente: '+str(end-start)+'\n')  
             
     finally:

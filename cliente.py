@@ -6,9 +6,10 @@ import threading
 from datetime import datetime
 import time
 
-num_clientes = int(input('Ingrese la cantidad de clientes que quiere crear'))
+num_clientes = int(input('Ingrese la cantidad de clientes que desea crear, recuerde que el servidor quedara esperando '
+                         'conexión hasta completar las cantidad de clientes que se le especifico atender'))
 while (num_clientes>25 and num_clientes <= 0):
-    num_clientes = int(input('Ingrese un número válido de clientes'))
+    num_clientes = int(input('Ingrese un número válido de clientes (Entre 0 y 25)'))
 
 
 #Creación del Log
@@ -26,8 +27,8 @@ class Ejecucion:
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         
         # Conectar socket al puerto donde se esta escuchando
-        server_address = ('192.168.58.128', 8888)
-        print(sys.stderr, 'connecting to %s port %s' % server_address)
+        server_address = ('localhost', 8888)
+        print( 'connecting to %s port %s' % server_address)
         sock.connect(server_address)
         file = open("./archivosRecibidos/"+nombre+"-prueba-"+str(num_clientes)+".txt", "w")
        
@@ -36,7 +37,7 @@ class Ejecucion:
             
             # Enviar datos
             message = b'Iniciar conexion...'
-            print (sys.stderr, 'enviando "%s"' % message)
+            print ( 'enviando "%s"' % message)
             sock.sendall(message)
         
             # buscar la respuesta
@@ -54,7 +55,7 @@ class Ejecucion:
                 sock.sendall(b'listo')
                 self.lock.acquire()
                 hash = sock.recv(32)
-                print(hash.decode('utf-8'))
+                print('Hash enviado por el servidor:',hash.decode('utf-8'))
                 sock.sendall(b'Hash recibido')
                 self.lock.release()
                 
@@ -78,7 +79,7 @@ class Ejecucion:
                             break
                         
                     else:
-                        print (sys.stderr, 'Termino de leer el archivo')
+                        print ( 'Termino de leer el archivo')
                         sock.sendall(b'Archivo recibido')
                         break
                 end = time.time()
@@ -90,7 +91,7 @@ class Ejecucion:
                 log.write('El nombre del cliente es: '+nombre+'\n')
                
                
-                print("MD5: {0}".format(md5.hexdigest()))  
+                print("Hash del archivo leido: {0}".format(md5.hexdigest()))
                   
                 
                 if(hash.decode('utf-8') == md5.hexdigest()):
@@ -104,7 +105,7 @@ class Ejecucion:
                 log.write('Valor total en bytes recibidos: '+str(tamano)+'\n')  
                 
         finally:
-            print (sys.stderr, 'Cerrar socket')
+            print ( 'Cerrar socket')
             sock.close()
             log.close()
             
