@@ -15,7 +15,7 @@ while (num_conexiones>25 and num_conexiones <= 0):
 
 
 # conectar socket al puerto
-server_address = ('192.168.58.128', 8888)
+server_address = ('localhost', 8888)
 print('El %s esta esparando en el puerto %s' % server_address)
 sock.bind(server_address)
 
